@@ -5,25 +5,57 @@
 #include <string.h>
 #include "listas.h"
 
-int palindromo(lista *palabra){
-	lista *aux = palabra;
-	char pString[1000] = "";
-	char pString2[1000] = "";
-	int i = 0, cont= 0;
-	while(aux){
-		pString[i]=aux->letra;
-		aux=aux->prox;
-		i++;
+void palindromo(lista *a, lista *b) {
+	int longitud = length(a, b);
+	int isPalindromo = 1;
+	lista *t = a;
+	lista *z = b;
+	while ((t->letra == z->letra) && (longitud > 2)) {
+		t = t->prox;
+		z = z->prev;
+		if (t->letra != z->letra) {
+			isPalindromo = 0;
+		}
+		longitud -= 2;
 	}
-	int j=strlen(pString);
-	for(i=0; i<strlen(pString); i++){
-			pString2[i] = pString[j-1];
-			j--;
+	
+	if (isPalindromo) {
+		imprimir2(a, b);
+		printf(" es un palindromo\n");
+	} else {
+		printf(" no hay palindromos\n");
 	}
-	// printf("Palabra 1: %s\n",pString );
-	// printf("Palabra 2: %s\n",pString2 );
-	return strcmp(pString, pString2);
 }
+
+void recorrerString(lista *palabra) {
+	// printf("En la rama ");
+	// imprimir(palabra);
+	// printf(", ");
+	lista *a = palabra;
+	lista *b = palabra->prox->prox;
+	int isPalindromo = 0;
+	
+	while (b) {
+		if (a->letra == b->letra) {
+			palindromo(a, b);
+			if (b->prox == NULL) {
+				a = a->prox;
+				b = a->prox->prox;
+			} else {
+				b = b->prox;
+			}
+		} else {
+			if (b->prox == NULL) {
+				a = a->prox;
+				b = a->prox->prox;
+			} else {
+				b = b->prox;
+			}
+		}
+	}
+}
+
+
 
 void recorrerDirectorios(char directorio[], lista **p) {
 	struct dirent *dentroDelDirectorio = NULL;
@@ -48,17 +80,10 @@ void recorrerDirectorios(char directorio[], lista **p) {
 			strcat(hijos, dentroDelDirectorio->d_name);
 			strcat(DNUEVO, "/");
 			strcat(DNUEVO, dentroDelDirectorio->d_name);
-			//printf("%s\n", DNUEVO);
 			recorrerDirectorios(DNUEVO, p);
 			if((*p)->prox){
-				printf("La palabra ");
-				imprimir(*p);
-				if(!palindromo(*p))
-					printf(" es palindroma\n");
-				else
-					printf(" no es palindroma\n");
+				recorrerString(*p);
 			}
-			// imprimir(*p);
 			eliminar(p);
 		}
 	}
