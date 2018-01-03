@@ -27,6 +27,6 @@ void imprimir(lista *p) {
 			printf("%c", t->letra);
 			t = t->prox;
 		}
-		printf("\n");
+		//printf("\n");
 	}
 }

@@ -5,6 +5,26 @@
 #include <string.h>
 #include "listas.h"
 
+int palindromo(lista *palabra){
+	lista *aux = palabra;
+	char pString[1000] = "";
+	char pString2[1000] = "";
+	int i = 0, cont= 0;
+	while(aux){
+		pString[i]=aux->letra;
+		aux=aux->prox;
+		i++;
+	}
+	int j=strlen(pString);
+	for(i=0; i<strlen(pString); i++){
+			pString2[i] = pString[j-1];
+			j--;
+	}
+	// printf("Palabra 1: %s\n",pString );
+	// printf("Palabra 2: %s\n",pString2 );
+	return strcmp(pString, pString2);
+}
+
 void recorrerDirectorios(char directorio[], lista **p) {
 	struct dirent *dentroDelDirectorio = NULL;
 	DIR *pdir = NULL;
@@ -28,9 +48,17 @@ void recorrerDirectorios(char directorio[], lista **p) {
 			strcat(hijos, dentroDelDirectorio->d_name);
 			strcat(DNUEVO, "/");
 			strcat(DNUEVO, dentroDelDirectorio->d_name);
-			printf("%s\n", DNUEVO);
+			//printf("%s\n", DNUEVO);
 			recorrerDirectorios(DNUEVO, p);
-			imprimir(*p);
+			if((*p)->prox){
+				printf("La palabra ");
+				imprimir(*p);
+				if(!palindromo(*p))
+					printf(" es palindroma\n");
+				else
+					printf(" no es palindroma\n");
+			}
+			// imprimir(*p);
 			eliminar(p);
 		}
 	}
