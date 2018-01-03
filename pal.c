@@ -5,7 +5,7 @@
 #include <string.h>
 #include "listas.h"
 
-void palindromo(lista *a, lista *b) {
+void palindromo(lista *a, lista *b, listaStr **str) {
 	int longitud = length(a, b);
 	int isPalindromo = 1;
 	lista *t = a;
@@ -20,45 +20,35 @@ void palindromo(lista *a, lista *b) {
 	}
 	
 	if (isPalindromo) {
-		imprimir2(a, b);
-		printf(" es un palindromo\n");
-	} else {
-		printf(" no hay palindromos\n");
+		if (!esta(a, b, *str)) {
+			imprimir2(a, b);
+			printf(" es un palindromo\n");
+			agregarStr(a, b, str);
+		}
 	}
 }
 
-void recorrerString(lista *palabra) {
-	// printf("En la rama ");
-	// imprimir(palabra);
-	// printf(", ");
+void recorrerString(lista *palabra, listaStr **str) {
 	lista *a = palabra;
 	lista *b = palabra->prox->prox;
 	int isPalindromo = 0;
 	
 	while (b) {
 		if (a->letra == b->letra) {
-			palindromo(a, b);
-			if (b->prox == NULL) {
-				a = a->prox;
-				b = a->prox->prox;
-			} else {
-				b = b->prox;
-			}
-		} else {
-			if (b->prox == NULL) {
-				a = a->prox;
-				b = a->prox->prox;
-			} else {
-				b = b->prox;
-			}
+			palindromo(a, b, str);
 		}
+		if (b->prox == NULL) {
+			a = a->prox;
+			b = a->prox->prox;
+		} else {
+			b = b->prox;
+		}	
 	}
 }
 
-
-
-void recorrerDirectorios(char directorio[], lista **p) {
+void recorrerDirectorios(char directorio[], lista **p, listaStr **str) {
 	struct dirent *dentroDelDirectorio = NULL;
+	struct dirent *aux;
 	DIR *pdir = NULL;
 	pdir = opendir(directorio);
 	char hijos[20] = "";
@@ -76,13 +66,12 @@ void recorrerDirectorios(char directorio[], lista **p) {
 		char DNUEVO[50] = "";
 		if ((strcmp(dentroDelDirectorio->d_name,".")) && (strcmp(dentroDelDirectorio->d_name,".."))) {
 			strcat(DNUEVO, directorio);
-			agregar(p, dentroDelDirectorio->d_name);
-			strcat(hijos, dentroDelDirectorio->d_name);
 			strcat(DNUEVO, "/");
 			strcat(DNUEVO, dentroDelDirectorio->d_name);
-			recorrerDirectorios(DNUEVO, p);
-			if((*p)->prox){
-				recorrerString(*p);
+			agregar(p, dentroDelDirectorio->d_name);
+			recorrerDirectorios(DNUEVO, p, str);
+			if ((*p)->prox) {
+				recorrerString(*p, str);
 			}
 			eliminar(p);
 		}
@@ -94,6 +83,7 @@ void recorrerDirectorios(char directorio[], lista **p) {
 int main(int argc, char *argv[]) {
 	char palabra[20];
 	lista *p = NULL;
-	recorrerDirectorios("./directoryTree", &p);
-	printf("\n");
+	listaStr *str = NULL;
+	recorrerDirectorios("./directoryTree", &p, &str);
+	eliminarStr(&str);
 }

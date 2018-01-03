@@ -1,8 +1,15 @@
+#include <string.h>
+
 typedef struct lista {
 	char letra;
 	struct lista *prox;
 	struct lista *prev;
 } lista;
+
+typedef struct listaStr {
+	char str[20];
+	struct listaStr *prox;
+} listaStr;
 
 int vacio(lista *p) {
 	return (p == NULL);
@@ -56,4 +63,51 @@ int length(lista *a, lista *b) {
 			t = t->prox;
 	}
 	return i;
+}
+
+void convertirEnString(lista *a, lista *b, char *palabra) {
+	lista *aux = a;
+	int i = 0;
+	while (aux != b->prox) {
+		palabra[i] = aux->letra;
+		i++;
+		aux = aux->prox;
+	}
+}
+
+void agregarStr(lista *a, lista *b, listaStr **str) {
+	char palabra[20] = "";
+	convertirEnString(a, b, palabra);
+	listaStr *t = malloc(sizeof(listaStr));
+	strcpy(t->str, palabra);
+	t->prox = *str;
+	*str = t;
+}
+
+void eliminarStr(listaStr **str) {
+	while (*str) {
+		free(*str);
+		*str = (*str)->prox;
+	}
+}
+
+void imprimirStr(listaStr *str) {
+	listaStr *t = str;
+	while (t) {
+		printf("%s\n", t->str);
+		t = t->prox;
+	}
+}
+
+int esta(lista *a, lista *b, listaStr *str) {
+	listaStr *aux = str;
+	char palabra[20] = "";
+	convertirEnString(a, b, palabra);
+	while (aux) {
+		if (!strcmp(palabra, aux->str)) {
+			return 1;
+		}
+		aux = aux->prox;
+	}
+	return 0;
 }
