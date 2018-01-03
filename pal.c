@@ -19,12 +19,10 @@ void palindromo(lista *a, lista *b, listaStr **str) {
 		longitud -= 2;
 	}
 	
-	if (isPalindromo) {
-		if (!esta(a, b, *str)) {
+	if ((isPalindromo) && (!esta(a, b, *str))) {
 			imprimir2(a, b);
 			printf(" es un palindromo\n");
 			agregarStr(a, b, str);
-		}
 	}
 }
 
