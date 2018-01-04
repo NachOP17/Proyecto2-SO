@@ -6,6 +6,11 @@ typedef struct lista {
 	struct lista *prev;
 } lista;
 
+typedef struct listaNum {
+	int valor;
+	struct listaNum *prox;
+} listaNum;
+
 typedef struct listaStr {
 	char str[20];
 	struct listaStr *prox;
@@ -44,14 +49,6 @@ void imprimir(lista *p) {
 			t = t->prox;
 		}
 		//printf("\n");
-	}
-}
-
-void imprimir2(lista *a, lista *b) {
-	lista *t = a;
-	while (t != b->prox) {
-		printf("%c", t->letra);
-		t = t->prox;
 	}
 }
 
@@ -110,4 +107,21 @@ int esta(lista *a, lista *b, listaStr *str) {
 		aux = aux->prox;
 	}
 	return 0;
+}
+
+void sumar(listaNum **p) {
+	listaNum *t =  malloc(sizeof(listaNum));
+	if (!(*p)) {
+		t->valor = 1;
+		t->prox = *p;
+		*p =t;
+	} else {
+		t->valor = (*p)->valor + 1;
+		t->prox = *p;
+		*p =t;
+	}
+}
+
+int cantidadDeHijos(listaNum *p) {
+	return p->valor;
 }

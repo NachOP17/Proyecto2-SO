@@ -5,7 +5,7 @@
 #include <string.h>
 #include "listas.h"
 
-void palindromo(lista *a, lista *b, listaStr **str) {
+void palindromo(lista *a, lista *b, listaStr **str, listaNum *hijos) {
 	int longitud = length(a, b);
 	int isPalindromo = 1;
 	lista *t = a;
@@ -19,21 +19,25 @@ void palindromo(lista *a, lista *b, listaStr **str) {
 		longitud -= 2;
 	}
 	
-	if ((isPalindromo) && (!esta(a, b, *str))) {
-			imprimir2(a, b);
-			printf(" es un palindromo\n");
+	if (cantidadDeHijos(hijos) <= 20) { 
+		if ((isPalindromo) && (!esta(a, b, *str))) {
 			agregarStr(a, b, str);
+		} 
+	} else {
+		eliminarStr(str);
+		printf("El directorio padre tiene mas de 20 hijos\n");
+		exit(1);
 	}
 }
 
-void recorrerString(lista *palabra, listaStr **str) {
+void recorrerString(lista *palabra, listaStr **str, listaNum *hijos) {
 	lista *a = palabra;
 	lista *b = palabra->prox->prox;
 	int isPalindromo = 0;
 	
 	while (b) {
 		if (a->letra == b->letra) {
-			palindromo(a, b, str);
+			palindromo(a, b, str, hijos);
 		}
 		if (b->prox == NULL) {
 			a = a->prox;
@@ -44,12 +48,11 @@ void recorrerString(lista *palabra, listaStr **str) {
 	}
 }
 
-void recorrerDirectorios(char directorio[], lista **p, listaStr **str) {
+int recorrerDirectorios(char directorio[], lista **p, listaStr **str, listaNum **hijos) {
 	struct dirent *dentroDelDirectorio = NULL;
 	struct dirent *aux;
 	DIR *pdir = NULL;
 	pdir = opendir(directorio);
-	char hijos[20] = "";
 	if (pdir == NULL) { // Si pdir no se inicializo correctamente o no existe el directorio
 			printf("Aqui?");
 			printf ("\nERROR! El directorio %s no existe\n", directorio);
@@ -63,18 +66,18 @@ void recorrerDirectorios(char directorio[], lista **p, listaStr **str) {
 		}
 		char DNUEVO[50] = "";
 		if ((strcmp(dentroDelDirectorio->d_name,".")) && (strcmp(dentroDelDirectorio->d_name,".."))) {
+			sumar(hijos);
 			strcat(DNUEVO, directorio);
 			strcat(DNUEVO, "/");
 			strcat(DNUEVO, dentroDelDirectorio->d_name);
 			agregar(p, dentroDelDirectorio->d_name);
-			recorrerDirectorios(DNUEVO, p, str);
+			recorrerDirectorios(DNUEVO, p, str, hijos);
 			if ((*p)->prox) {
-				recorrerString(*p, str);
+				recorrerString(*p, str, *hijos);
 			}
 			eliminar(p);
 		}
 	}
-
 	closedir(pdir);
 }
 
@@ -82,6 +85,9 @@ int main(int argc, char *argv[]) {
 	char palabra[20];
 	lista *p = NULL;
 	listaStr *str = NULL;
-	recorrerDirectorios("./directoryTree", &p, &str);
+	listaNum *hijos = 0;
+	recorrerDirectorios("./directoryTree", &p, &str, &hijos);
+	printf("Los palindromos que se encontraron son los siguientes: \n");
+	imprimirStr(str);
 	eliminarStr(&str);
 }
