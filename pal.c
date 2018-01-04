@@ -87,7 +87,11 @@ int main(int argc, char *argv[]) {
 	listaStr *str = NULL;
 	listaNum *hijos = 0;
 	recorrerDirectorios("./directoryTree", &p, &str, &hijos);
-	printf("Los palindromos que se encontraron son los siguientes: \n");
-	imprimirStr(str);
-	eliminarStr(&str);
+	if (!str) {
+		printf("No hay palindromos\n");
+	} else {
+		printf("Los palindromos que se encontraron son los siguientes: \n");
+		imprimirStr(str);
+		eliminarStr(&str);
+	}
 }
